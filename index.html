@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Prompt Generator - プロ級のプロンプトを誰でも簡単に</title>
+    <meta name="description" content="エンジニアやクリエイター向けのAIプロンプト生成ツール。構造化された命令文で正確な回答を引き出します。">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark-bg': '#0f172a',
+                        'dark-card': '#1e293b',
+                        'dark-hover': '#334155',
+                        'accent-blue': '#3b82f6',
+                        'accent-blue-hover': '#2563eb',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="bg-dark-bg text-slate-200 min-h-screen">
+    <!-- Header -->
+    <header class="bg-dark-card border-b border-slate-700 py-6 mb-8">
+        <div class="container mx-auto px-4">
+            <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                ✨ AI Prompt Generator
+            </h1>
+            <p class="text-slate-400 mt-2">誰でもプロ級のAI指示が出せるプロンプト生成ツール</p>
+        </div>
+    </header>
+
+    <!-- Mode Switcher Tabs -->
+    <div class="bg-dark-card border-b border-slate-700 mb-8">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center gap-2 py-4">
+                <span class="text-sm text-slate-400 mr-2">モード:</span>
+                <button id="modeLite" class="mode-tab active" data-mode="lite">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    Lite (初心者)
+                </button>
+                <button id="modeNormal" class="mode-tab" data-mode="normal">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Normal (標準)
+                </button>
+                <button id="modeHard" class="mode-tab" data-mode="hard">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                    Hard (上級者)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 警告メッセージ -->
+    <div class="container mx-auto px-4 mb-6">
+        <div class="bg-red-900/20 border-2 border-red-500 rounded-lg p-4 flex items-start gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-500 flex-shrink-0 mt-0.5" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <div>
+                <h3 class="text-red-500 font-bold text-lg mb-1">⚠️ 重要な注意事項</h3>
+                <p class="text-red-400 font-medium">個人情報の入力、会社、学校内の情報の入力はしないでください</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container mx-auto px-4 pb-12">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            <!-- Left Panel: Input Form -->
+            <div class="space-y-6">
+                <div class="bg-dark-card rounded-lg p-6 shadow-xl border border-slate-700 mode-lite-normal-only">
+                    <h2 class="text-xl font-semibold mb-6 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-blue-400" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                        プロンプト設定
+                    </h2>
+
+                    <!-- Expert Role Selection -->
+                    <div class="mb-5 mode-normal-only">
+                        <label for="expertRole" class="block text-sm font-medium text-slate-300 mb-2">
+                            専門家ロール
+                        </label>
+                        <select id="expertRole" class="input-field">
+                            <option value="">選択してください</option>
+                            <option value="シニアゲームプログラマー">シニアゲームプログラマー</option>
+                            <option value="UIデザイナー">UIデザイナー</option>
+                            <option value="フロントエンドエンジニア">フロントエンドエンジニア</option>
+                            <option value="バックエンドエンジニア">バックエンドエンジニア</option>
+                            <option value="データサイエンティスト">データサイエンティスト</option>
+                            <option value="DevOpsエンジニア">DevOpsエンジニア</option>
+                            <option value="プロダクトマネージャー">プロダクトマネージャー</option>
+                            <option value="AIプロンプトエンジニア">AIプロンプトエンジニア</option>
+                        </select>
+                    </div>
+
+                    <!-- Design Pattern -->
+                    <div class="mb-5 mode-normal-only">
+                        <label for="designPattern" class="block text-sm font-medium text-slate-300 mb-2">
+                            デザインパターン / アーキテクチャ
+                        </label>
+                        <select id="designPattern" class="input-field">
+                            <option value="">指定なし</option>
+                            <option value="Singleton">Singleton (シングルトン)</option>
+                            <option value="Observer">Observer (オブザーバー)</option>
+                            <option value="Factory Method">Factory Method (ファクトリー)</option>
+                            <option value="State">State (ステート)</option>
+                            <option value="Strategy">Strategy (ストラテジー)</option>
+                            <option value="Command">Command (コマンド)</option>
+                            <option value="Component">Component (コンポーネント指向)</option>
+                            <option value="ECS">ECS (Entity Component System)</option>
+                            <option value="MVVM">MVVM (Model-View-ViewModel)</option>
+                        </select>
+                    </div>
+
+                    <!-- Reference Content -->
+                    <div class="mb-5 mode-normal-only">
+                        <label for="referenceContent" class="block text-sm font-medium text-slate-300 mb-2">
+                            参照元 / 調査済み内容
+                        </label>
+                        <textarea id="referenceContent" rows="4" class="input-field resize-y"
+                            placeholder="既存の知見、参照したドキュメント、試したことなどを入力してください。AIがより的確な回答を生成できます。"></textarea>
+                    </div>
+
+                    <!-- Question Content (Required) -->
+                    <div class="mb-5">
+                        <label for="questionContent" class="block text-sm font-medium text-slate-300 mb-2">
+                            具体的な質問内容 <span class="text-red-400">*</span>
+                        </label>
+                        <textarea id="questionContent" rows="5" class="input-field resize-y"
+                            placeholder="AIに質問したい具体的な内容を記述してください。できるだけ詳細に記述すると、より良い回答が得られます。" required></textarea>
+                    </div>
+
+                    <!-- Toggle Options -->
+                    <div class="space-y-4">
+                        <!-- Logical Proof Mode -->
+                        <div class="toggle-container">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label for="logicalProof" class="font-medium text-slate-200">論理的動作保証の要求</label>
+                                    <p class="text-sm text-slate-400 mt-1">厳格な証明、メモリ・計算量の分析を要求します</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="logicalProof">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Detailed Steps Mode -->
+                        <div class="toggle-container">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label for="detailedSteps" class="font-medium text-slate-200">実装手順・使い方の詳細要求</label>
+                                    <p class="text-sm text-slate-400 mt-1">ステップバイステップの実装ガイドを要求します</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="detailedSteps">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hard Mode Content -->
+                <div id="hardModeContent"
+                    class="bg-dark-card rounded-lg p-6 shadow-xl border border-slate-700 mode-hard-only"
+                    style="display: none;">
+                    <h2 class="text-xl font-semibold mb-6 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-purple-400" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                        </svg>
+                        Hard Mode (上級者向け)
+                    </h2>
+
+                    <!-- Group A: 開発環境・コンテキスト -->
+                    <div class="mb-6 p-4 bg-dark-bg rounded-lg border border-slate-600">
+                        <h3 class="text-lg font-semibold text-purple-300 mb-4">📦 開発環境・コンテキスト</h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- 専門家ロール（手入力） -->
+                            <div class="md:col-span-2">
+                                <label for="hardExpertRole" class="block text-sm font-medium text-slate-300 mb-2">
+                                    専門家ロール（詳細指定）
+                                </label>
+                                <input type="text" id="hardExpertRole" class="input-field"
+                                    placeholder="例: Unreal Engine 5のレンダリングエンジニア">
+                            </div>
+
+                            <!-- 言語・バージョン -->
+                            <div>
+                                <label for="hardLanguageVersion" class="block text-sm font-medium text-slate-300 mb-2">
+                                    言語・バージョン
+                                </label>
+                                <input type="text" id="hardLanguageVersion" class="input-field"
+                                    placeholder="例: C++23, C# 12, Python 3.12, Rust 1.75">
+                            </div>
+
+                            <!-- ライブラリ・フレームワーク -->
+                            <div>
+                                <label for="hardLibraries" class="block text-sm font-medium text-slate-300 mb-2">
+                                    使用ライブラリ・フレームワーク
+                                </label>
+                                <input type="text" id="hardLibraries" class="input-field"
+                                    placeholder="例: Unity 6, Unreal Engine 5.4, DirectX 12 Ultimate, Vulkan, React 19">
+                            </div>
+
+                            <!-- 最新情報の扱い -->
+                            <div class="md:col-span-2">
+                                <div class="toggle-container">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <label for="hardIncludeLatest"
+                                                class="font-medium text-slate-200">最新情報を含める</label>
+                                            <p class="text-sm text-slate-400 mt-1">プレビュー版や最新の仕様情報も参照する</p>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="hardIncludeLatest">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 外部/内部ライブラリの説明 -->
+                            <div class="md:col-span-2">
+                                <label for="hardInternalLibs" class="block text-sm font-medium text-slate-300 mb-2">
+                                    外部/内部ライブラリの説明
+                                </label>
+                                <textarea id="hardInternalLibs" rows="4" class="input-field resize-y"
+                                    placeholder="例: 社内ライブラリ『MyLib.dll』には関数『Connect()』があり、データベースへの接続を管理します。戻り値はboolで..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Group B: コーディング規約 -->
+                    <div class="mb-6 p-4 bg-dark-bg rounded-lg border border-slate-600">
+                        <h3 class="text-lg font-semibold text-blue-300 mb-4">📝 コーディング規約</h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- 変数名の命名規則 -->
+                            <div>
+                                <label for="hardNamingConvention" class="block text-sm font-medium text-slate-300 mb-2">
+                                    変数名の命名規則
+                                </label>
+                                <input type="text" id="hardNamingConvention" class="input-field"
+                                    placeholder="例: キャメルケース, ハンガリアン記法(m_)">
+                            </div>
+
+                            <!-- 参照禁止サイト -->
+                            <div>
+                                <label for="hardBlockedSites" class="block text-sm font-medium text-slate-300 mb-2">
+                                    参照禁止サイト
+                                </label>
+                                <input type="text" id="hardBlockedSites" class="input-field"
+                                    placeholder="例: 古いWiki, 〇〇.com">
+                            </div>
+
+                            <!-- コメントの有無 -->
+                            <div class="md:col-span-2">
+                                <div class="toggle-container">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <label for="hardIncludeComments"
+                                                class="font-medium text-slate-200">コード内に解説コメントを含める</label>
+                                            <p class="text-sm text-slate-400 mt-1">生成されるコードに詳細なコメントを追加</p>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="hardIncludeComments">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Group C: ロジック・堅牢性 -->
+                    <div class="mb-6 p-4 bg-dark-bg rounded-lg border border-slate-600">
+                        <h3 class="text-lg font-semibold text-green-300 mb-4">🛡️ ロジック・堅牢性</h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- エラーハンドリングの位置 -->
+                            <div>
+                                <label for="hardErrorHandling" class="block text-sm font-medium text-slate-300 mb-2">
+                                    エラーハンドリングの位置
+                                </label>
+                                <input type="text" id="hardErrorHandling" class="input-field"
+                                    placeholder="例: 関数の冒頭で早期リターン">
+                            </div>
+
+                            <!-- デバッグ処理 -->
+                            <div>
+                                <label for="hardDebugProcess" class="block text-sm font-medium text-slate-300 mb-2">
+                                    デバッグ処理
+                                </label>
+                                <input type="text" id="hardDebugProcess" class="input-field"
+                                    placeholder="例: 処理の前後にログを出力">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 質問内容（Hard Mode専用） -->
+                    <div class="mb-5">
+                        <label for="hardQuestionContent" class="block text-sm font-medium text-slate-300 mb-2">
+                            具体的な質問内容 <span class="text-red-400">*</span>
+                        </label>
+                        <textarea id="hardQuestionContent" rows="6" class="input-field resize-y"
+                            placeholder="上級者向けの詳細な質問を記述してください。技術的な制約、パフォーマンス要件、特殊な実装要件などを含めることができます。"
+                            required></textarea>
+                    </div>
+
+                    <!-- Toggle Options (Hard Mode) -->
+                    <div class="space-y-4">
+                        <!-- Logical Proof Mode -->
+                        <div class="toggle-container">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label for="hardLogicalProof" class="font-medium text-slate-200">論理的動作保証の要求</label>
+                                    <p class="text-sm text-slate-400 mt-1">厳格な証明、メモリ・計算量の分析を要求します</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="hardLogicalProof">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Detailed Steps Mode -->
+                        <div class="toggle-container">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label for="hardDetailedSteps"
+                                        class="font-medium text-slate-200">実装手順・使い方の詳細要求</label>
+                                    <p class="text-sm text-slate-400 mt-1">ステップバイステップの実装ガイドを要求します</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="hardDetailedSteps">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Output Preview -->
+            <div class="space-y-6">
+                <div class="bg-dark-card rounded-lg p-6 shadow-xl border border-slate-700">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-xl font-semibold flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-green-400" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            生成プロンプト
+                        </h2>
+                        <button id="copyButton" class="btn-copy" title="クリップボードにコピー">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                            コピー
+                        </button>
+                    </div>
+
+                    <div id="promptPreview" class="prompt-preview">
+                        <p class="text-slate-500 italic">左側のフォームに入力すると、ここにプロンプトがリアルタイムで生成されます。</p>
+                    </div>
+
+                    <div id="copyFeedback" class="copy-feedback">
+                        ✓ クリップボードにコピーしました！
+                    </div>
+                </div>
+
+                <!-- Info Card -->
+                <div
+                    class="bg-gradient-to-br from-blue-900/30 to-purple-900/30 rounded-lg p-5 border border-blue-700/50 mode-lite-normal-only">
+                    <h3 class="font-semibold text-blue-300 mb-2 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        使い方のコツ
+                    </h3>
+                    <ul class="text-sm text-slate-300 space-y-2">
+                        <li>• 質問内容は具体的に記述するほど良い回答が得られます</li>
+                        <li>• 参照元を記載すると、AIが重複を避けた回答を生成します</li>
+                        <li>• トグルスイッチで詳細な制約を追加できます</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

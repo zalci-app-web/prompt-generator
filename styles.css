@@ -1,0 +1,316 @@
+/* カスタムスタイル */
+
+/* モード切り替えタブ */
+.mode-tab {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 0.5rem;
+    color: #94a3b8;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.mode-tab:hover {
+    background-color: #334155;
+    border-color: #475569;
+    color: #cbd5e1;
+}
+
+.mode-tab.active {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    border-color: #3b82f6;
+    color: white;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.mode-tab svg {
+    flex-shrink: 0;
+}
+
+/* モード制御用クラス */
+.mode-normal-only {
+    display: block;
+    transition: opacity 0.3s ease, max-height 0.3s ease;
+}
+
+.mode-normal-only.hidden {
+    display: none;
+}
+
+.mode-lite-normal-only {
+    display: block;
+    transition: opacity 0.3s ease;
+}
+
+.mode-lite-normal-only.hidden {
+    display: none;
+}
+
+.mode-hard-only {
+    display: none;
+}
+
+.mode-hard-only.active {
+    display: block;
+}
+
+
+/* 入力フィールドの共通スタイル */
+.input-field {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #0f172a;
+    border: 1px solid #475569;
+    border-radius: 0.5rem;
+    color: #e2e8f0;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.input-field::placeholder {
+    color: #64748b;
+}
+
+/* トグルスイッチのコンテナ */
+.toggle-container {
+    padding: 1rem;
+    background-color: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.toggle-container:hover {
+    border-color: #475569;
+    background-color: #1e293b;
+}
+
+/* トグルスイッチ本体 */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 3rem;
+    height: 1.75rem;
+    flex-shrink: 0;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #475569;
+    transition: 0.3s;
+    border-radius: 1.75rem;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 1.25rem;
+    width: 1.25rem;
+    left: 0.25rem;
+    bottom: 0.25rem;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+}
+
+input:checked+.toggle-slider {
+    background-color: #3b82f6;
+}
+
+input:checked+.toggle-slider:before {
+    transform: translateX(1.25rem);
+}
+
+/* ホバー効果 */
+.toggle-slider:hover {
+    background-color: #64748b;
+}
+
+input:checked+.toggle-slider:hover {
+    background-color: #2563eb;
+}
+
+/* プロンプトプレビューエリア */
+.prompt-preview {
+    background-color: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    min-height: 400px;
+    max-height: 600px;
+    overflow-y: auto;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* スクロールバーのカスタマイズ */
+.prompt-preview::-webkit-scrollbar {
+    width: 8px;
+}
+
+.prompt-preview::-webkit-scrollbar-track {
+    background: #1e293b;
+    border-radius: 4px;
+}
+
+.prompt-preview::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 4px;
+}
+
+.prompt-preview::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+/* コピーボタン */
+.btn-copy {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+}
+
+.btn-copy:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(59, 130, 246, 0.4);
+}
+
+.btn-copy:active {
+    transform: translateY(0);
+}
+
+/* コピー完了フィードバック */
+.copy-feedback {
+    display: none;
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background-color: #059669;
+    color: white;
+    border-radius: 0.5rem;
+    text-align: center;
+    font-weight: 500;
+    animation: slideDown 0.3s ease;
+}
+
+.copy-feedback.show {
+    display: block;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* プロンプトプレビュー内のフォーマット */
+.prompt-preview h1,
+.prompt-preview h2,
+.prompt-preview h3 {
+    color: #60a5fa;
+    font-weight: bold;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.prompt-preview h1 {
+    font-size: 1.25rem;
+}
+
+.prompt-preview h2 {
+    font-size: 1.1rem;
+}
+
+.prompt-preview ul {
+    margin-left: 1.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.prompt-preview li {
+    margin-bottom: 0.25rem;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 1024px) {
+    .prompt-preview {
+        min-height: 300px;
+        max-height: 500px;
+    }
+}
+
+/* アニメーション */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.4s ease;
+}
+
+/* ローディング状態 */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* セレクト要素のカスタマイズ */
+select.input-field {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1.5rem;
+    padding-right: 2.5rem;
+}
+
+select.input-field option {
+    background-color: #1e293b;
+    color: #e2e8f0;
+}
